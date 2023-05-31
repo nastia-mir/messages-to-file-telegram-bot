@@ -1,10 +1,12 @@
+from io import BytesIO
+import re
+
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from decouple import Config, RepositoryEnv
 
-from io import BytesIO
 
 env = Config(RepositoryEnv('.env'))
 bot = Bot(token=env.get('TOKEN'))
@@ -14,6 +16,14 @@ dp = Dispatcher(bot, storage=storage)
 messages_buffer = []
 title = False
 file_title = ''
+
+
+def slugify(s):
+  s = s.lower().strip()
+  s = re.sub(r'[^\w\s-]', '', s)
+  s = re.sub(r'[\s_-]+', '-', s)
+  s = re.sub(r'^-+|-+$', '', s)
+  return s
 
 
 @dp.message_handler(commands=['start'])
@@ -52,7 +62,7 @@ async def get_file(message: types.Message):
         await message.reply('Enter your file title first.')
         return
 
-    file_data = BytesIO('\n\n'.join(messages_buffer).encode('utf-8'))
+    file_data = BytesIO('\n\n'.join(messages_buffer).encode('utf8'))
 
     await bot.send_document(message.chat.id, (f'{file_title}.doc', file_data), caption="Here is your file:")
     messages_buffer.clear()
@@ -64,10 +74,10 @@ async def collect_messages(message: types.Message):
     if not title:
         text = message.text
         messages_buffer.append(text)
-        await message.reply("Message saved!")
+        await message.reply("Message saved! Press /next if you want to move to the next step.")
     else:
         global file_title
-        file_title = message.text #fix forbidden chars etc
+        file_title = slugify(message.text)
         await message.reply("File title saved! Now press /get_file to get your file.")
         title = False
 
