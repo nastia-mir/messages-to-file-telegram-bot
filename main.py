@@ -8,6 +8,8 @@ from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from decouple import Config, RepositoryEnv
 
+from background import keep_alive
+
 
 env = Config(RepositoryEnv('.env'))
 bot = Bot(token=env.get('TOKEN'))
@@ -116,5 +118,6 @@ async def collect_messages(message: types.Message):
     except:
         await message.reply("I can't remember where we stopped last time. Please click /start to begin.")
 
+keep_alive()
 if __name__ == '__main__':
     asyncio.run(executor.start_polling(dp))
