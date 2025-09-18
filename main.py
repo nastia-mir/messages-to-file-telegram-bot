@@ -10,8 +10,6 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from background import keep_alive
 
-print("Env vars seen by Python:", list(os.environ.keys()))
-
 bot = Bot(token=str(os.getenv("TOKEN")))
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
