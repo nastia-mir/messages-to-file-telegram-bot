@@ -1,4 +1,5 @@
 import re
+import os
 import asyncio
 
 from io import BytesIO
@@ -6,13 +7,11 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import Message, BufferedInputFile
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
-from decouple import Config, RepositoryEnv
 
 from background import keep_alive
 
 
-# env = Config(RepositoryEnv('.env'))
-bot = Bot(token=${{shared.TOKEN}})
+bot = Bot(token=os.environ["TOKEN"])
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
