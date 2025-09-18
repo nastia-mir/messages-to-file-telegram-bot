@@ -1,7 +1,6 @@
 import re
 import os
 import asyncio
-import logging
 
 from io import BytesIO
 from aiogram import Bot, Dispatcher
@@ -11,8 +10,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from background import keep_alive
 
-log = logging.getLogger()
-log.info(str(os.getenv("TOKEN")))
+print(str(os.getenv("TOKEN")))
 bot = Bot(token=str(os.getenv("TOKEN")))
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
