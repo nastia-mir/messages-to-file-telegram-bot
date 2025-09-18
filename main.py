@@ -11,8 +11,8 @@ from decouple import Config, RepositoryEnv
 from background import keep_alive
 
 
-env = Config(RepositoryEnv('.env'))
-bot = Bot(token=env.get('TOKEN'))
+# env = Config(RepositoryEnv('.env'))
+bot = Bot(token=${{shared.TOKEN}})
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
