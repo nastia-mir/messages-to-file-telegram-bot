@@ -11,7 +11,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from background import keep_alive
 
 
-bot = Bot(token=os.environ["TOKEN"])
+bot = Bot(token=os.getenv["TOKEN"])
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
