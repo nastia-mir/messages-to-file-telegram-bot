@@ -1,6 +1,7 @@
 import re
 import os
 import asyncio
+import logging
 
 from io import BytesIO
 from aiogram import Bot, Dispatcher
@@ -9,6 +10,8 @@ from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from background import keep_alive
+
+log = logging.getLogger()
 
 bot = Bot(token=str(os.getenv("TOKEN")))
 storage = MemoryStorage()
@@ -34,7 +37,9 @@ async def clear_buffer(chat_id):
 
 @dp.message(Command("start"))
 async def process_start_command(message: Message):
+    log.info(f"Bot was started by {message.chat.username}")
     chat_id = message.chat.id
+
     if chat_id in messages_buffers.keys():
         del messages_buffers[chat_id]
     messages_buffers[chat_id] = {'messages': [],
@@ -42,13 +47,13 @@ async def process_start_command(message: Message):
                                  'title_flag': False,
                                  'buffer_timeout': buffer_timeout}
     asyncio.create_task(clear_buffer(chat_id))
-    await message.answer("Hello! I am your message formatter bot. Send me your messages and I will create .doc file "
+    await message.answer("Hello! I am your message formatter bot. Send me your messages and I will create .txt file "
                         "for you.")
 
 
 @dp.message(Command("help"))
 async def process_help_command(message: Message):
-    await message.answer("Send me your messages and I will create .doc file for you. Click /start to begin."
+    await message.answer("Send me your messages and I will create .txt file for you. Click /start to begin."
                         "\n\nPlease note that message buffer expires after 10 minutes. If you need more time, "
                         "you will have to resend messages once again.")
 
@@ -104,6 +109,7 @@ async def get_file(message: Message):
         document=document,
         caption="Here is your file:"
     )
+    log.info(f"User {message.chat.username} exported file with {len(messages_buffers[chat_id]['messages'])} messages")
 
     messages_buffers[chat_id]['messages'].clear()
     messages_buffers[chat_id]['title'] = ""
